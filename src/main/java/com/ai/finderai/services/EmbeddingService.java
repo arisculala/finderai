@@ -44,6 +44,9 @@ public class EmbeddingService {
     @Operation(summary = "Generate text embedding", description = "Generates an embedding using the specified AI provider.")
     public EmbeddingResponseDTO generateEmbedding(GetEmbeddingRequestDTO requestDTO) {
         logger.debug("Generating embedding: {}", requestDTO);
+        logger.debug("Generating embedding getProvider: {}", requestDTO.getProvider());
+        logger.debug("Generating embedding getModel: {}", requestDTO.getModel());
+        logger.debug("Generating embedding getText: {}", requestDTO.getText());
 
         AIProviderClient aiProviderClient = aiProviderClientFactory.getAIProviderClient(requestDTO.getProvider());
         float[] rawEmbedding = aiProviderClient.generateEmbedding(requestDTO.getText());

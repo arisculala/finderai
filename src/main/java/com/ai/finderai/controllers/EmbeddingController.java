@@ -1,17 +1,16 @@
 package com.ai.finderai.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ai.finderai.dto.EmbeddingResponseDTO;
 import com.ai.finderai.dto.GetEmbeddingRequestDTO;
 import com.ai.finderai.services.EmbeddingService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -26,11 +25,7 @@ public class EmbeddingController {
         this.embeddingService = embeddingService;
     }
 
-    @Operation(summary = "Generate a text embedding", description = "Generates an embedding vector for the given text using AI models such as OpenAI or DeepSeek.", requestBody = @RequestBody(description = "Input text to generate an embedding", required = true, content = @Content(schema = @Schema(implementation = GetEmbeddingRequestDTO.class))), responses = {
-            @ApiResponse(responseCode = "200", description = "Embedding successfully generated", content = @Content(schema = @Schema(implementation = EmbeddingResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
+    @Operation(summary = "Generate a text embedding", description = "Generates an embedding vector for the given text using AI models such as OpenAI or DeepSeek.")
     @GetMapping
     public ResponseEntity<EmbeddingResponseDTO> getEmbedding(@Valid @RequestBody GetEmbeddingRequestDTO requestDTO) {
         EmbeddingResponseDTO responseDTO = embeddingService.generateEmbedding(requestDTO);
