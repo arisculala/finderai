@@ -1,21 +1,26 @@
 package com.ai.finderai.services;
 
-import java.util.List;
-import java.util.Map;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import com.generic.exceptions.InternalServerException;
 
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Service for integrating with the Hugging Face AI API to generate text
+ * embeddings.
+ */
 @Service("huggingface")
+@Schema(description = "Client service for Hugging Face AI API.")
 public class HuggingFaceClientService implements AIProviderClient {
+
     private static final Logger logger = LoggerFactory.getLogger(HuggingFaceClientService.class);
 
     private final WebClient.Builder webClientBuilder;
@@ -48,6 +53,8 @@ public class HuggingFaceClientService implements AIProviderClient {
     @Override
     public float[] generateEmbedding(String text) {
         try {
+            logger.info("Requesting Hugging Face embedding for text: {}", text);
+
             Map<String, Object> requestBody = Map.of(
                     "inputs", text,
                     "options", Map.of("wait_for_model", true));
@@ -64,14 +71,15 @@ public class HuggingFaceClientService implements AIProviderClient {
                 embeddingArray[i] = response.get(i).floatValue();
             }
 
+            logger.info("Successfully retrieved Hugging Face embedding.");
             return embeddingArray;
 
         } catch (WebClientResponseException e) {
-            logger.error("HuggingFace embeddings API error: {}", e.getResponseBodyAsString());
-            throw new InternalServerException("HuggingFace API error: " + e.getResponseBodyAsString(), e);
+            logger.error("Hugging Face API error: {}", e.getResponseBodyAsString());
+            throw new InternalServerException("Hugging Face API error: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            logger.error("Error generating embedding using HuggingFace API", e);
-            throw new InternalServerException("Error generating embedding: " + e.getMessage(), e);
+            logger.error("Error generating embedding using Hugging Face API", e);
+            throw new InternalServerException("Hugging Face API error: " + e.getMessage(), e);
         }
     }
 }

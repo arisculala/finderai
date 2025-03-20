@@ -1,19 +1,24 @@
 package com.ai.finderai.services;
 
-import java.util.List;
-import java.util.Map;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import com.generic.exceptions.InternalServerException;
 
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Service for integrating with the DeepSeek AI API to generate text embeddings.
+ */
 @Service("deepseek")
+@Schema(description = "Client service for DeepSeek AI API.")
 public class DeepSeekClientService implements AIProviderClient {
+
     private static final Logger logger = LoggerFactory.getLogger(DeepSeekClientService.class);
 
     private final WebClient webClient;
@@ -35,6 +40,8 @@ public class DeepSeekClientService implements AIProviderClient {
     @Override
     public float[] generateEmbedding(String text) {
         try {
+            logger.info("Requesting DeepSeek AI embedding for text: {}", text);
+
             Map<String, Object> response = webClient.post()
                     .uri("/embeddings")
                     .header("Authorization", "Bearer " + apiKey)
@@ -50,14 +57,16 @@ public class DeepSeekClientService implements AIProviderClient {
             for (int i = 0; i < embeddingList.size(); i++) {
                 embeddingArray[i] = embeddingList.get(i).floatValue();
             }
+
+            logger.info("Successfully retrieved DeepSeek AI embedding.");
             return embeddingArray;
+
         } catch (WebClientResponseException e) {
-            logger.error("HuggingFace embeddings API error: {}", e);
-            throw new InternalServerException("Deepseek embeddings API error: " + e.getResponseBodyAsString(), e);
+            logger.error("DeepSeek API error: {}", e.getResponseBodyAsString());
+            throw new InternalServerException("DeepSeek API error: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            logger.error("Error encountered generation embedding using Deepseek API: {}", e);
-            throw new InternalServerException(
-                    "Error encountered generation embedding using Deepseek API: " + e.getMessage(), e);
+            logger.error("Error generating embedding using DeepSeek API", e);
+            throw new InternalServerException("DeepSeek API error: " + e.getMessage(), e);
         }
     }
 }

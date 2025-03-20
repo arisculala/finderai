@@ -1,5 +1,7 @@
 package com.ai.finderai.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,17 +12,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Request DTO for searching vector data based on text query")
 public class SearchVectorDataRequestDTO {
 
     @NotBlank
-    private String provider; // e.g., "huggingface", "openai", etc.
+    @Schema(description = "AI provider used for generating embeddings", example = "openai")
+    private String provider;
 
     @NotBlank
-    private String model; // e.g., "text-embedding-ada-002"
+    @Schema(description = "Model used for generating embeddings", example = "text-embedding-ada-002")
+    private String model;
 
     @NotBlank
+    @Schema(description = "Query text for similarity search", example = "Machine learning basics")
     private String query;
 
-    @NotBlank
+    @Min(1)
+    @Schema(description = "Number of closest records to return", example = "10")
     private int limit;
 }

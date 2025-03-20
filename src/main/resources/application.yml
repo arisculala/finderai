@@ -42,6 +42,6 @@ aiprovider:
     huggingface:
       api:
         base-url: https://api-inference.huggingface.co/pipeline/feature-extraction/
-        api-key: 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
+        api-key: 
         secret: 
         model: sentence-transformers/all-MiniLM-L6-v2

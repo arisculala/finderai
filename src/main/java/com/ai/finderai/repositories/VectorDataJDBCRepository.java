@@ -1,17 +1,21 @@
 package com.ai.finderai.repositories;
 
-import java.util.List;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import com.ai.finderai.dto.VectorDataDTO;
 import com.ai.finderai.utils.DatabaseUtils;
 
+import java.util.List;
+
+/**
+ * Repository for executing raw SQL queries for vector data retrieval.
+ */
 @Repository
+@Schema(description = "Repository for performing direct SQL operations on vector data")
 public class VectorDataJDBCRepository {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private final DatabaseUtils databaseUtils;
 
     public VectorDataJDBCRepository(JdbcTemplate jdbcTemplate, DatabaseUtils databaseUtils) {
@@ -20,7 +24,7 @@ public class VectorDataJDBCRepository {
     }
 
     /**
-     * Find the top N closest records to the given embedding using cosine
+     * Finds the top N closest records to the given embedding using cosine
      * similarity.
      *
      * @param embedding The input embedding as a comma-separated string (e.g.,
@@ -41,7 +45,8 @@ public class VectorDataJDBCRepository {
                         rs.getLong("id"),
                         rs.getString("provider"),
                         rs.getString("model"),
-                        rs.getString("text"), null,
+                        rs.getString("text"),
+                        null, // TODO: Embedding is not retrieved here
                         databaseUtils.parseJsonbToMap(rs.getString("metadata")),
                         rs.getTimestamp("created_at").toLocalDateTime()),
                 embedding, limit);
