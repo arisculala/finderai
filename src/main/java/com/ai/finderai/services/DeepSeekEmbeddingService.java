@@ -21,7 +21,7 @@ public class DeepSeekEmbeddingService implements EmbeddingService {
     @Value("${embedding.provider.deepseek.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.deepseek.api.key}")
+    @Value("${embedding.provider.deepseek.api.api-key}")
     private String apiKey;
 
     @Value("${embedding.provider.deepseek.api.model}")

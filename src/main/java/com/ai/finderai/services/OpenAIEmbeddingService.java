@@ -21,7 +21,7 @@ public class OpenAIEmbeddingService implements EmbeddingService {
     @Value("${embedding.provider.openai.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.openai.api.key}")
+    @Value("${embedding.provider.openai.api.api-key}")
     private String apiKey;
 
     @Value("${embedding.provider.openai.api.model}")

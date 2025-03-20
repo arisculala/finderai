@@ -24,7 +24,7 @@ public class HuggingFaceEmbeddingService implements EmbeddingService {
     @Value("${embedding.provider.huggingface.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.huggingface.api.key}")
+    @Value("${embedding.provider.huggingface.api.api-key}")
     private String apiKey;
 
     @Value("${embedding.provider.huggingface.api.model}")
