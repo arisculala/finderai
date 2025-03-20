@@ -14,23 +14,23 @@ import com.generic.exceptions.InternalServerException;
 
 import jakarta.annotation.PostConstruct;
 
-@Service("huggingface-embedding-service")
-public class HuggingFaceEmbeddingService implements EmbeddingService {
-    private static final Logger logger = LoggerFactory.getLogger(HuggingFaceEmbeddingService.class);
+@Service("huggingface")
+public class HuggingFaceClientService implements AIProviderClient {
+    private static final Logger logger = LoggerFactory.getLogger(HuggingFaceClientService.class);
 
     private final WebClient.Builder webClientBuilder;
     private WebClient webClient;
 
-    @Value("${embedding.provider.huggingface.api.base-url}")
+    @Value("${aiprovider.provider.huggingface.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.huggingface.api.api-key}")
+    @Value("${aiprovider.provider.huggingface.api.api-key}")
     private String apiKey;
 
-    @Value("${embedding.provider.huggingface.api.model}")
+    @Value("${aiprovider.provider.huggingface.api.model}")
     private String model;
 
-    public HuggingFaceEmbeddingService(WebClient.Builder webClientBuilder) {
+    public HuggingFaceClientService(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 

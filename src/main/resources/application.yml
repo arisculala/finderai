@@ -23,7 +23,7 @@ logging:
   level:
     root: DEBUG
 
-embedding:
+aiprovider:
   max-dimension: 1536 #set to match vector database column
   default-provider: huggingface
   provider:
@@ -42,6 +42,6 @@ embedding:
     huggingface:
       api:
         base-url: https://api-inference.huggingface.co/pipeline/feature-extraction/
-        api-key: your_huggingface_api_key
+        api-key: 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
         secret: 
         model: sentence-transformers/all-MiniLM-L6-v2

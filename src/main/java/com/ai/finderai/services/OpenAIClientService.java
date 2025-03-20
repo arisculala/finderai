@@ -12,22 +12,22 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.generic.exceptions.InternalServerException;
 
-@Service("openai-embedding-service")
-public class OpenAIEmbeddingService implements EmbeddingService {
-    private static final Logger logger = LoggerFactory.getLogger(OpenAIEmbeddingService.class);
+@Service("openai")
+public class OpenAIClientService implements AIProviderClient {
+    private static final Logger logger = LoggerFactory.getLogger(OpenAIClientService.class);
 
     private final WebClient webClient;
 
-    @Value("${embedding.provider.openai.api.base-url}")
+    @Value("${aiprovider.provider.openai.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.openai.api.api-key}")
+    @Value("${aiprovider.provider.openai.api.api-key}")
     private String apiKey;
 
-    @Value("${embedding.provider.openai.api.model}")
+    @Value("${aiprovider.provider.openai.api.model}")
     private String model;
 
-    public OpenAIEmbeddingService(WebClient.Builder webClientBuilder) {
+    public OpenAIClientService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 

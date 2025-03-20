@@ -21,21 +21,21 @@ public class VectorDataService {
     private final DatabaseUtils databaseUtils;
     private final VectorDataRepository vectorDataRepository;
     private final VectorDataJDBCRepository vectorDataJDBCRepository;
-    private final EmbeddingServiceFactory embeddingServiceFactory;
+    private final AIProviderClientFactory aProviderClientFactory;
 
     public VectorDataService(DatabaseUtils databaseUtils, VectorDataRepository vectorDataRepository,
-            VectorDataJDBCRepository vectorDataJDBCRepository, EmbeddingServiceFactory embeddingServiceFactory) {
+            VectorDataJDBCRepository vectorDataJDBCRepository, AIProviderClientFactory embeddingServiceFactory) {
         this.databaseUtils = databaseUtils;
         this.vectorDataRepository = vectorDataRepository;
         this.vectorDataJDBCRepository = vectorDataJDBCRepository;
-        this.embeddingServiceFactory = embeddingServiceFactory;
+        this.aProviderClientFactory = embeddingServiceFactory;
     }
 
     public VectorDataDTO saveVectorData(NewVectorDataRequestDTO newVectorData) {
         logger.debug("Saving new vector data: {}", newVectorData);
 
-        EmbeddingService embeddingService = embeddingServiceFactory.getEmbeddingService(newVectorData.getProvider());
-        float[] rawEmbedding = embeddingService.generateEmbedding(newVectorData.getText());
+        AIProviderClient aiProviderClient = aProviderClientFactory.getAIProviderClient(newVectorData.getProvider());
+        float[] rawEmbedding = aiProviderClient.generateEmbedding(newVectorData.getText());
         float[] processedEmbedding = databaseUtils.padEmbedding(rawEmbedding);
 
         VectorData vectorData = new VectorData(null, newVectorData.getProvider(),
@@ -47,8 +47,8 @@ public class VectorDataService {
     public List<VectorDataDTO> searchTextClosestRecords(SearchVectorDataRequestDTO searchRequestDTO) {
         logger.debug("Search text closest records: {}", searchRequestDTO);
 
-        EmbeddingService embeddingService = embeddingServiceFactory.getEmbeddingService(searchRequestDTO.getProvider());
-        float[] rawEmbedding = embeddingService.generateEmbedding(searchRequestDTO.getQuery());
+        AIProviderClient aiProviderClient = aProviderClientFactory.getAIProviderClient(searchRequestDTO.getProvider());
+        float[] rawEmbedding = aiProviderClient.generateEmbedding(searchRequestDTO.getQuery());
         float[] paddedEmbedding = databaseUtils.padEmbedding(rawEmbedding);
 
         String vectorEmbeddingArray = databaseUtils.convertToPgVectorArray(paddedEmbedding);

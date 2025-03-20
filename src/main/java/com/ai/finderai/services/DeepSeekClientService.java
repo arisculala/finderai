@@ -12,22 +12,22 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.generic.exceptions.InternalServerException;
 
-@Service("deepseek-embedding-service")
-public class DeepSeekEmbeddingService implements EmbeddingService {
-    private static final Logger logger = LoggerFactory.getLogger(DeepSeekEmbeddingService.class);
+@Service("deepseek")
+public class DeepSeekClientService implements AIProviderClient {
+    private static final Logger logger = LoggerFactory.getLogger(DeepSeekClientService.class);
 
     private final WebClient webClient;
 
-    @Value("${embedding.provider.deepseek.api.base-url}")
+    @Value("${aiprovider.provider.deepseek.api.base-url}")
     private String baseUrl;
 
-    @Value("${embedding.provider.deepseek.api.api-key}")
+    @Value("${aiprovider.provider.deepseek.api.api-key}")
     private String apiKey;
 
-    @Value("${embedding.provider.deepseek.api.model}")
+    @Value("${aiprovider.provider.deepseek.api.model}")
     private String model;
 
-    public DeepSeekEmbeddingService(WebClient.Builder webClientBuilder) {
+    public DeepSeekClientService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 

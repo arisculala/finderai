@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class DatabaseUtils {
 
-    @Value("${embedding.max-dimension}")
-    private int MAX_DIMENSION;
+    @Value("${aiprovider.max-dimension}")
+    public int MAX_DIMENSION;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
