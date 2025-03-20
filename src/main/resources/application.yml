@@ -1,0 +1,44 @@
+server:
+  port: 3000
+
+spring:
+  application:
+    name: finderai
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finderai_db
+    username: postgres
+    password: 
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true # true will show the sql in the log
+  flyway:
+    enabled: true
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+    time-zone: UTC
+
+logging:
+  level:
+    root: DEBUG
+
+embedding:
+  max-dimension: 1536 #set to match vector database column
+  default-provider: huggingface
+  provider:
+    openai:
+      api:
+        base-url: https://api.openai.com/v1
+        key: your_openai_api_key
+        model: text-embedding-ada-002
+    deepseek:
+      api:
+        base-url: https://api.deepseek.com/v1
+        key: your_deepseek_api_key
+        model: deepseek-embedding
+    huggingface:
+      api:
+        base-url: https://api-inference.huggingface.co/pipeline/feature-extraction/
+        key: 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
+        model: sentence-transformers/all-MiniLM-L6-v2
