@@ -34,21 +34,33 @@ public class VectorDataJDBCRepository {
      */
     public List<VectorDataDTO> getClosestRecords(String embedding, int limit) {
         String sql = """
-                SELECT id, provider, model, text, metadata, created_at
+                SELECT id, provider, model, text, embedding, metadata, created_at
                 FROM vector_data
                 ORDER BY embedding <=> string_to_array(?, ',')::float[]::vector
                 LIMIT ?
                 """;
 
         return jdbcTemplate.query(sql,
-                (rs, rowNum) -> new VectorDataDTO(
-                        rs.getLong("id"),
-                        rs.getString("provider"),
-                        rs.getString("model"),
-                        rs.getString("text"),
-                        null, // TODO: Embedding is not retrieved here
-                        databaseUtils.parseJsonbToMap(rs.getString("metadata")),
-                        rs.getTimestamp("created_at").toLocalDateTime()),
+                (rs, rowNum) -> {
+                    // Convert SQL array to Java float[]
+                    java.sql.Array sqlArray = rs.getArray("embedding");
+                    Float[] floatObjects = (Float[]) sqlArray.getArray();
+                    float[] embeddingArray = new float[floatObjects.length];
+
+                    for (int i = 0; i < floatObjects.length; i++) {
+                        embeddingArray[i] = floatObjects[i]; // Convert Float to float
+                    }
+
+                    return new VectorDataDTO(
+                            rs.getLong("id"),
+                            rs.getString("provider"),
+                            rs.getString("model"),
+                            rs.getString("text"),
+                            embeddingArray,
+                            databaseUtils.parseJsonbToMap(rs.getString("metadata")),
+                            rs.getTimestamp("created_at").toLocalDateTime());
+                },
                 embedding, limit);
+
     }
 }
