@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service for integrating with the DeepSeek AI API to generate text embeddings.
+ * Service for integrating with the DeepSeek AI API.
  */
 @Service("deepseek")
 @Schema(description = "Client service for DeepSeek AI API.")

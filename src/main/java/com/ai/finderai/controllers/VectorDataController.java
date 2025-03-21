@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/vectors")
-@Tag(name = "Vector Data", description = "API for storing and searching vector embeddings")
+@Tag(name = "Vector API", description = "API for storing and searching vector embeddings")
 public class VectorDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(VectorDataController.class);

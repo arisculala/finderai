@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service for integrating with the OpenAI API to generate text embeddings.
+ * Service for integrating with the OpenAI API.
  */
 @Service("openai")
 @Schema(description = "Client service for OpenAI API.")

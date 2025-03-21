@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service for integrating with the Hugging Face AI API to generate text
- * embeddings.
+ * Service for integrating with the Hugging Face AI API.
  */
 @Service("huggingface")
 @Schema(description = "Client service for Hugging Face AI API.")

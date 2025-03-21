@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/embeddings")
-@Tag(name = "Embeddings", description = "API for generating text embeddings")
+@Tag(name = "Embeddings API", description = "API for generating text embeddings")
 public class EmbeddingController {
 
     private final EmbeddingService embeddingService;
