@@ -6,10 +6,10 @@ FinderAI is an AI-powered application that allows users to generate and store te
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Setup & Installation](#setupinstallation)
-- [Running the Application](#runningtheapplication)
-- [API Documentation](#apidocumentation)
-- [Future Enhancements](#futureenhancements)
+- [Setup and Installation](#setup-and-installation)
+- [Running the Application](#running-the-application)
+- [API Documentation](#api-documentation)
+- [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -37,7 +37,7 @@ Make sure you have the following installed:
 - Docker
 - PostgreSQL
 
-## Setup & Installation
+## Setup and Installation
 
 **1. Clone the Repository**
 
@@ -197,7 +197,7 @@ mvn spring-boot:run
   }
   ```
 
-## 🏗 Future Enhancements
+## Future Enhancements
 
 - Integration with Different Data Sources
   - Import data from Excel, databases, APIs, OCR, and other sources.
@@ -216,7 +216,7 @@ To contribute:
 - Push to the branch: `git push origin feat/new-feature`
 - Create a pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**.
 
