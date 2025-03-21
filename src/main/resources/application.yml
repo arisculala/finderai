@@ -7,14 +7,14 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/finderai_db
     username: postgres
-    password: 
+    password:
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true # true will show the sql in the log
-  flyway:
-    enabled: true
   jackson:
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
     time-zone: UTC
@@ -42,6 +42,6 @@ aiprovider:
     huggingface:
       api:
         base-url: https://api-inference.huggingface.co/pipeline/feature-extraction/
-        api-key: 
+        api-key: your_huggingface_api_key
         secret: 
         model: sentence-transformers/all-MiniLM-L6-v2
