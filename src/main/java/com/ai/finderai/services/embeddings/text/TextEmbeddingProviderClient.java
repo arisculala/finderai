@@ -1,4 +1,4 @@
-package com.ai.finderai.services;
+package com.ai.finderai.services.embeddings.text;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * Interface for AI provider clients responsible for generating text embeddings.
  */
 @Schema(description = "Interface for AI provider clients responsible for generating text embeddings.")
-public interface AIProviderClient {
+public interface TextEmbeddingProviderClient {
 
     /**
      * Generates an embedding for the given text.
@@ -14,5 +14,5 @@ public interface AIProviderClient {
      * @param text The input text to generate an embedding for.
      * @return An array of floating-point numbers representing the embedding.
      */
-    float[] generateEmbedding(String text);
+    float[] generateEmbeddingFromText(String text);
 }

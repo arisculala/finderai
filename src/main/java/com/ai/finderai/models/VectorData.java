@@ -10,6 +10,8 @@ import com.generic.utils.SnowflakeIdGenerator;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "embedding_type", discriminatorType = DiscriminatorType.STRING)
 @Entity
 @Getter
 @Setter
@@ -30,21 +32,13 @@ public class VectorData {
     @Schema(description = "Model used for generating the embedding", example = "text-embedding-ada-002")
     private String model;
 
-    @Column(nullable = false)
-    @Schema(description = "Original text associated with the embedding", example = "This is a sample text.")
-    private String text;
-
-    @Column(nullable = false, columnDefinition = "vector(1536)")
-    @Schema(description = "Generated embedding vector", example = "[-0.021, 0.324, -0.98, 0.45]")
-    private float[] embedding;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    @Schema(description = "Additional metadata associated with the vector", example = "{\"category\": \"science\", \"source\": \"Wikipedia\"}")
+    @Schema(description = "Additional metadata", example = "{\"category\": \"science\"}")
     private Map<String, Object> metadata;
 
     @Column(nullable = false, updatable = false)
-    @Schema(description = "Timestamp when the vector data was created", example = "2025-03-19T12:30:00")
+    @Schema(description = "Timestamp when the vector was created", example = "2025-03-19T12:30:00")
     private LocalDateTime createdAt;
 
     @PrePersist

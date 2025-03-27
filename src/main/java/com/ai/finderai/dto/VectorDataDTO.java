@@ -9,6 +9,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import com.ai.finderai.models.ImageVectorData;
+import com.ai.finderai.models.TextVectorData;
 import com.ai.finderai.models.VectorData;
 
 @Getter
@@ -43,9 +45,19 @@ public class VectorDataDTO {
         this.id = vectorData.getId();
         this.provider = vectorData.getProvider();
         this.model = vectorData.getModel();
-        this.text = vectorData.getText();
-        this.embedding = vectorData.getEmbedding();
         this.metadata = vectorData.getMetadata();
         this.createdAt = vectorData.getCreatedAt();
+
+        // Check if the vectorData is a TextVectorData instance
+        if (vectorData instanceof TextVectorData textVector) {
+            this.text = textVector.getText();
+            this.embedding = textVector.getEmbedding();
+        }
+
+        // Check if the vectorData is an ImageVectorData instance
+        if (vectorData instanceof ImageVectorData imageVector) {
+            this.text = imageVector.getImageUrl(); // Assigning imageUrl to text field (if needed)
+            this.embedding = imageVector.getEmbedding();
+        }
     }
 }

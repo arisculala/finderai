@@ -1,4 +1,4 @@
-package com.ai.finderai.services;
+package com.ai.finderai.services.embeddings.text;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import com.generic.exceptions.InternalServerException;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 @Service("openai")
 @Schema(description = "Client service for OpenAI API.")
-public class OpenAIClientService implements AIProviderClient {
+public class OpenAIClientService implements TextEmbeddingProviderClient {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAIClientService.class);
 
@@ -38,7 +39,7 @@ public class OpenAIClientService implements AIProviderClient {
 
     @SuppressWarnings("unchecked")
     @Override
-    public float[] generateEmbedding(String text) {
+    public float[] generateEmbeddingFromText(String text) {
         try {
             logger.info("Requesting OpenAI embedding for text: {}", text);
 

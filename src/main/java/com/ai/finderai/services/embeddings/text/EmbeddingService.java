@@ -1,4 +1,4 @@
-package com.ai.finderai.services;
+package com.ai.finderai.services.embeddings.text;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,7 @@ public class EmbeddingService {
     private static final Logger logger = LoggerFactory.getLogger(EmbeddingService.class);
 
     private final DatabaseUtils databaseUtils;
-    private final AIProviderClientFactory aiProviderClientFactory;
+    private final TextEmbeddingProviderClientFactory aiProviderClientFactory;
 
     /**
      * Constructor for EmbeddingService.
@@ -29,7 +29,7 @@ public class EmbeddingService {
      * @param databaseUtils           Utility class for handling database-related
      *                                operations.
      */
-    public EmbeddingService(AIProviderClientFactory aiProviderClientFactory, DatabaseUtils databaseUtils) {
+    public EmbeddingService(TextEmbeddingProviderClientFactory aiProviderClientFactory, DatabaseUtils databaseUtils) {
         this.aiProviderClientFactory = aiProviderClientFactory;
         this.databaseUtils = databaseUtils;
     }
@@ -42,14 +42,15 @@ public class EmbeddingService {
      * @return EmbeddingResponseDTO containing the generated embedding and metadata.
      */
     @Operation(summary = "Generate text embedding", description = "Generates an embedding using the specified AI provider.")
-    public EmbeddingResponseDTO generateEmbedding(GetEmbeddingRequestDTO requestDTO) {
+    public EmbeddingResponseDTO generateEmbeddingFromText(GetEmbeddingRequestDTO requestDTO) {
         logger.debug("Generating embedding: {}", requestDTO);
         logger.debug("Generating embedding getProvider: {}", requestDTO.getProvider());
         logger.debug("Generating embedding getModel: {}", requestDTO.getModel());
         logger.debug("Generating embedding getText: {}", requestDTO.getText());
 
-        AIProviderClient aiProviderClient = aiProviderClientFactory.getAIProviderClient(requestDTO.getProvider());
-        float[] rawEmbedding = aiProviderClient.generateEmbedding(requestDTO.getText());
+        TextEmbeddingProviderClient aiProviderClient = aiProviderClientFactory
+                .getAIProviderClient(requestDTO.getProvider());
+        float[] rawEmbedding = aiProviderClient.generateEmbeddingFromText(requestDTO.getText());
 
         return new EmbeddingResponseDTO(
                 requestDTO.getProvider(),
