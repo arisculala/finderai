@@ -10,6 +10,8 @@ import lombok.Setter;
 
 import java.util.Set;
 
+import com.ai.finderai.enums.EmbeddingType;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,5 +36,5 @@ public class SearchVectorDataRequestDTO {
     private int limit;
 
     @Schema(description = "Types of vector data to search (e.g., text, image)", example = "[\"text\", \"image\"]")
-    private Set<String> types;
+    private Set<EmbeddingType> types;
 }

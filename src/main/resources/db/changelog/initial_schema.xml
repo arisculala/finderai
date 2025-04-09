@@ -20,24 +20,23 @@
       </sql>
   </changeSet>
 
-  <!-- Create vector_data table with Single Table Inheritance (STI) -->
+  <!-- Create vector_data table with updated structure -->
   <changeSet id="1" author="arisculala">
         <createTable tableName="vector_data">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true"/>
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" />
             </column>
-            <column name="embedding_type" type="varchar(50)" /> <!-- Discriminator Column -->
+            <column name="provider" type="varchar(255)" />
+            <column name="model" type="varchar(255)" />
+            <column name="embedding_type" type="varchar(50)" />
+            <column name="source" type="text" />
             <column name="embedding" type="vector(1536)" />
             <column name="metadata" type="jsonb" />
-            <column name="model" type="varchar(255)" />
-            <column name="provider" type="varchar(255)" />
-            <column name="text" type="varchar(255)" />
-            <column name="image_url" type="varchar(255)" />
-            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP" />
         </createTable>
   </changeSet>
 
-  <!-- Create an index for faster search on discriminator column -->
+  <!-- Create an index for faster search on embedding_type -->
   <changeSet id="2" author="arisculala">
       <createIndex indexName="idx_embedding_type" tableName="vector_data">
           <column name="embedding_type"/>

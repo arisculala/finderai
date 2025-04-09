@@ -72,17 +72,68 @@ cp example.application.yml application.yml
 
 ## Running the Application
 
-- Option 1: Run Locally
+### Setup Kafka Locally
+
+If you haven’t installed Docker yet, download and install it from Docker’s official website.
+
+- Run kakfa using `docker-compose-kafka.yml` (This will start Kafka and Zookeeper in the background.)
+
+```bash
+cd finderai
+docker-compose -f docker-compose-kafka.yml up -d
+```
+
+- Verify that Kafka is running (You should see two running containers: `kafka` (Kafka broker); `zookeeper` (Zookeeper))
+
+```bash
+docker ps
+```
+
+- Create kafka topic
+
+```bash
+docker exec -it kafka kafka-topics.sh --create --topic test-topic --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+```
+
+- List all kafka topics
+
+```bash
+docker exec -it kafka kafka-topics.sh --list --bootstrap-server localhost:9092
+```
+
+- Produce a message
+
+```bash
+docker exec -it kafka kafka-console-producer.sh --topic test-topic --bootstrap-server localhost:9092
+```
+
+- Then type:
+
+```bash
+Hello Kafka!
+```
+
+- Consume a message
+
+```bash
+docker exec -it kafka kafka-console-consumer.sh --topic test-topic --bootstrap-server localhost:9092 --from-beginning
+```
+
+- You should see:
+
+```bash
+Hello Kafka!
+```
+
+### Run the application
+
+- Run Locally
 
 ```bash
 cd finderai
 mvn clean install
 mvn spring-boot:run
 ```
-
-- Option 2: Run with Docker
-  docker build -t finderai .
-  docker run -p 3000:3000 finderai
 
 ## API Documentation
 

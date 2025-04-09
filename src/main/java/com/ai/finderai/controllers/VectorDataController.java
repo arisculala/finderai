@@ -1,7 +1,5 @@
 package com.ai.finderai.controllers;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -31,29 +29,15 @@ public class VectorDataController {
         this.vectorDataService = vectorDataService;
     }
 
-    @Operation(summary = "Store a new text-based vector embedding", description = "Saves a new text embedding into the database.")
-    @PostMapping("/text")
-    public ResponseEntity<VectorDataDTO> saveTextEmbedding(
-            @Valid @RequestBody NewVectorDataRequestDTO requestDTO) {
-        logger.debug("Calling POST /api/v1/vectors/text endpoint");
-        VectorDataDTO savedData = vectorDataService.saveTextEmbedding(requestDTO);
-        return ResponseEntity.ok(savedData);
+    @Operation(summary = "Store a new text embedding", description = "Saves a new text embedding into the database.")
+    @PostMapping
+    public ResponseEntity<VectorDataDTO> saveTextEmbedding(@Valid @RequestBody NewVectorDataRequestDTO requestDTO) {
+        return ResponseEntity.ok(vectorDataService.saveEmbedding(requestDTO));
     }
 
-    @Operation(summary = "Store a new image-based vector embedding", description = "Saves a new image embedding into the database.")
-    @PostMapping("/image")
-    public ResponseEntity<VectorDataDTO> saveImageEmbedding(
-            @Valid @RequestBody NewVectorDataRequestDTO requestDTO) {
-        logger.debug("Calling POST /api/v1/vectors/image endpoint");
-        VectorDataDTO savedData = vectorDataService.saveImageEmbedding(requestDTO);
-        return ResponseEntity.ok(savedData);
-    }
-
-    @Operation(summary = "Search for closest vector embeddings", description = "Finds the closest vector embeddings based on the input query.")
+    @Operation(summary = "Search for similar vectors", description = "Finds the closest matching vector records based on input query.")
     @PostMapping("/search")
-    public ResponseEntity<List<VectorDataDTO>> searchClosestRecords(
-            @Valid @RequestBody SearchVectorDataRequestDTO searchRequestDTO) {
-        logger.debug("Calling POST /api/v1/vectors/search endpoint");
-        return ResponseEntity.ok(vectorDataService.searchClosestRecords(searchRequestDTO));
+    public ResponseEntity<?> searchVectorData(@Valid @RequestBody SearchVectorDataRequestDTO requestDTO) {
+        return ResponseEntity.ok(vectorDataService.searchClosestRecords(requestDTO));
     }
 }

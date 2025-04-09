@@ -24,6 +24,23 @@ logging:
   level:
     root: DEBUG
 
+# Application specific
+application:
+  embeddings:
+    max-texts-limit: 10
+    max-images-limit: 10
+
+# Kafka Configuration
+kafka:
+  bootstrap-servers: "" # Set empty so Spring does not connect else set localhost:9092
+  enabled: false
+  topic:
+    text-embedding: text-embedding-topic
+    image-embedding: image-embedding-topic
+    csv-embedding: csv-embedding-topic
+    database-embedding: database-embedding-topic
+    file-embedding: file-embedding-topic
+
 aiprovider:
   max-dimension: 1536 #set to match vector database column
   default-provider: huggingface
@@ -43,6 +60,6 @@ aiprovider:
     huggingface:
       api:
         base-url: https://api-inference.huggingface.co/pipeline/feature-extraction/
-        api-key: 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
+        api-key: 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
         secret: 
         model: sentence-transformers/all-MiniLM-L6-v2

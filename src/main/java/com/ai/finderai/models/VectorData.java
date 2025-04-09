@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import com.ai.finderai.enums.EmbeddingType;
 import com.generic.utils.SnowflakeIdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "embedding_type", discriminatorType = DiscriminatorType.STRING)
 @Entity
 @Getter
 @Setter
@@ -31,6 +31,18 @@ public class VectorData {
     @Column(nullable = false)
     @Schema(description = "Model used for generating the embedding", example = "text-embedding-ada-002")
     private String model;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Schema(description = "Type of embedding (TEXT, IMAGE, FILE, etc.)", example = "TEXT")
+    private EmbeddingType embeddingType;
+
+    @Column(nullable = false)
+    @Schema(description = "Original input data (text, image URL, file path, etc.)", example = "Hello world")
+    private String source;
+
+    @Column(nullable = false, columnDefinition = "vector(1536)")
+    private float[] embedding;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

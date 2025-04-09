@@ -1,7 +1,6 @@
 package com.ai.finderai.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,8 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ai.finderai.dto.NewVectorDataRequestDTO;
 import com.ai.finderai.dto.SearchVectorDataRequestDTO;
 import com.ai.finderai.dto.VectorDataDTO;
-import com.ai.finderai.models.ImageVectorData;
-import com.ai.finderai.models.TextVectorData;
+import com.ai.finderai.enums.EmbeddingType;
 import com.ai.finderai.models.VectorData;
 import com.ai.finderai.repositories.VectorDataJDBCRepository;
 import com.ai.finderai.repositories.VectorDataRepository;
@@ -22,6 +20,7 @@ import com.ai.finderai.services.embeddings.image.ImageEmbeddingProviderClientFac
 import com.ai.finderai.services.embeddings.text.TextEmbeddingProviderClient;
 import com.ai.finderai.services.embeddings.text.TextEmbeddingProviderClientFactory;
 import com.ai.finderai.utils.DatabaseUtils;
+import com.generic.exceptions.InternalServerException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -55,77 +54,72 @@ public class VectorDataService {
         this.imageEmbeddingProviderFactory = imageEmbeddingProviderFactory;
     }
 
-    @Operation(summary = "Save text vector data", description = "Generates and saves vector embedding from input text.")
-    public VectorDataDTO saveTextEmbedding(NewVectorDataRequestDTO newVectorData) {
-        logger.debug("Saving new text embedding: {}", newVectorData);
+    public VectorDataDTO saveEmbedding(NewVectorDataRequestDTO newVectorData) {
+        logger.debug("Saving new embedding: {}", newVectorData);
 
-        TextEmbeddingProviderClient aiProviderClient = textEmbeddingProviderFactory
-                .getAIProviderClient(newVectorData.getProvider());
-        float[] rawEmbedding = aiProviderClient.generateEmbeddingFromText(newVectorData.getText());
-        float[] processedEmbedding = databaseUtils.padEmbedding(rawEmbedding);
+        float[] paddedEmbedding = databaseUtils.padEmbedding(newVectorData.getEmbedding());
 
-        TextVectorData textVectorData = new TextVectorData();
-        textVectorData.setProvider(newVectorData.getProvider());
-        textVectorData.setModel(newVectorData.getModel());
-        textVectorData.setText(newVectorData.getText());
-        textVectorData.setEmbedding(processedEmbedding);
-        textVectorData.setMetadata(newVectorData.getMetadata());
+        VectorData vectorData = new VectorData();
+        vectorData.setEmbeddingType(newVectorData.getEmbeddingType());
+        vectorData.setProvider(newVectorData.getProvider());
+        vectorData.setModel(newVectorData.getModel());
+        vectorData.setSource(newVectorData.getSource());
+        vectorData.setEmbedding(paddedEmbedding);
+        vectorData.setMetadata(newVectorData.getMetadata());
 
-        return new VectorDataDTO(vectorDataRepository.save(textVectorData));
-    }
-
-    @Operation(summary = "Save image vector data", description = "Generates and saves vector embedding from an image URL.")
-    public VectorDataDTO saveImageEmbedding(NewVectorDataRequestDTO newVectorData) {
-        logger.debug("Saving new image embedding: {}", newVectorData);
-
-        ImageEmbeddingProviderClient aiProviderClient = imageEmbeddingProviderFactory
-                .getAIProviderClient(newVectorData.getProvider());
-        float[] rawEmbedding = aiProviderClient.generateEmbeddingFromImage(newVectorData.getText()); // Assuming `text`
-                                                                                                     // holds an image
-                                                                                                     // URL
-        float[] processedEmbedding = databaseUtils.padEmbedding(rawEmbedding);
-
-        ImageVectorData imageVectorData = new ImageVectorData();
-        imageVectorData.setProvider(newVectorData.getProvider());
-        imageVectorData.setModel(newVectorData.getModel());
-        imageVectorData.setImageUrl(newVectorData.getText());
-        imageVectorData.setEmbedding(processedEmbedding);
-        imageVectorData.setMetadata(newVectorData.getMetadata());
-
-        return new VectorDataDTO(vectorDataRepository.save(imageVectorData));
+        return new VectorDataDTO(vectorDataRepository.save(vectorData));
     }
 
     @Operation(summary = "Search closest vector records", description = "Finds the closest matching vector records based on input query.")
     public List<VectorDataDTO> searchClosestRecords(SearchVectorDataRequestDTO searchRequestDTO) {
-        logger.debug("Searching closest vector records: {}", searchRequestDTO);
+        logger.info("Starting search for: {}", searchRequestDTO);
 
-        Set<String> types = new HashSet<>(searchRequestDTO.getTypes()); // text, image, etc.
+        // Get the types directly from the request (no need to convert from Set<String>
+        // to Set<EmbeddingType>)
+        Set<EmbeddingType> types = searchRequestDTO.getTypes();
         List<VectorDataDTO> results = new ArrayList<>();
 
-        if (types.contains("text")) {
-            TextEmbeddingProviderClient textClient = textEmbeddingProviderFactory
-                    .getAIProviderClient(searchRequestDTO.getProvider());
-            float[] textEmbedding = textClient.generateEmbeddingFromText(searchRequestDTO.getQuery());
-            results.addAll(searchByEmbedding(textEmbedding, searchRequestDTO.getLimit()));
-        }
+        try {
+            // Check for "TEXT" type
+            if (types.contains(EmbeddingType.TEXT)) {
+                TextEmbeddingProviderClient textClient = textEmbeddingProviderFactory
+                        .getAIProviderClient(searchRequestDTO.getProvider());
+                float[] textEmbedding = textClient.generateEmbeddingFromText(searchRequestDTO.getQuery());
+                results.addAll(searchByEmbedding(textEmbedding, searchRequestDTO.getLimit()));
+            }
 
-        if (types.contains("image")) {
-            ImageEmbeddingProviderClient imageClient = imageEmbeddingProviderFactory
-                    .getAIProviderClient(searchRequestDTO.getProvider());
-            float[] imageEmbedding = imageClient.generateEmbeddingFromImage(searchRequestDTO.getQuery());
-            results.addAll(searchByEmbedding(imageEmbedding, searchRequestDTO.getLimit()));
-        }
+            // Check for "IMAGE" type
+            if (types.contains(EmbeddingType.IMAGE)) {
+                ImageEmbeddingProviderClient imageClient = imageEmbeddingProviderFactory
+                        .getAIProviderClient(searchRequestDTO.getProvider());
+                float[] imageEmbedding = imageClient.generateEmbeddingFromImage(searchRequestDTO.getQuery());
+                results.addAll(searchByEmbedding(imageEmbedding, searchRequestDTO.getLimit()));
+            }
 
-        if (results.isEmpty()) {
-            throw new IllegalArgumentException("No valid embedding type provided: " + types);
+            // Check for other types if needed (e.g., file, audio, etc.)
+            // You can add further checks here based on other types in the Enum
+
+            if (results.isEmpty()) {
+                logger.warn("No results found for types: {}", types);
+            }
+
+        } catch (Exception e) {
+            logger.error("Error during search operation", e);
+            throw new InternalServerException("Search operation failed", e);
         }
 
         return results;
     }
 
     private List<VectorDataDTO> searchByEmbedding(float[] embedding, int limit) {
+        logger.debug("Searching database with embedding vector...");
+
         float[] paddedEmbedding = databaseUtils.padEmbedding(embedding);
         String vectorEmbeddingArray = databaseUtils.convertToPgVectorArray(paddedEmbedding);
-        return vectorDataJDBCRepository.getClosestRecords(vectorEmbeddingArray, limit);
+
+        List<VectorDataDTO> searchResults = vectorDataJDBCRepository.getClosestRecords(vectorEmbeddingArray, limit);
+
+        logger.info("Found {} matching records", searchResults.size());
+        return searchResults;
     }
 }

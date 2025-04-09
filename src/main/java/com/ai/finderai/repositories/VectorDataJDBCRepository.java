@@ -1,12 +1,15 @@
 package com.ai.finderai.repositories;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import com.ai.finderai.dto.VectorDataDTO;
+import com.ai.finderai.enums.EmbeddingType;
 import com.ai.finderai.utils.DatabaseUtils;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Repository for executing raw SQL queries for vector data retrieval.
@@ -34,7 +37,7 @@ public class VectorDataJDBCRepository {
      */
     public List<VectorDataDTO> getClosestRecords(String embedding, int limit) {
         String sql = """
-                SELECT id, provider, model, text, metadata, created_at
+                SELECT id, embedding_type, embedding, metadata, model, provider, source, created_at
                 FROM vector_data
                 ORDER BY embedding <=> string_to_array(?, ',')::float[]::vector
                 LIMIT ?
@@ -42,11 +45,13 @@ public class VectorDataJDBCRepository {
 
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
+                    // Return the DTO using the values from the result set
                     return new VectorDataDTO(
                             rs.getLong("id"),
                             rs.getString("provider"),
                             rs.getString("model"),
-                            rs.getString("text"),
+                            EmbeddingType.valueOf(rs.getString("embedding_type")),
+                            rs.getString("source"),
                             null,
                             databaseUtils.parseJsonbToMap(rs.getString("metadata")),
                             rs.getTimestamp("created_at").toLocalDateTime());
